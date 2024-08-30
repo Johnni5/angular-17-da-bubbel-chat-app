@@ -1,7 +1,0 @@
-git pull origin developer
-
-git push origin local:remote
-
-git checkout developer 
-
-git branch -a
