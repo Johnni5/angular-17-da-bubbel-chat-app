@@ -5,7 +5,7 @@ import { MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [MatDialogContent, ],
+  imports: [MatDialogContent, MatButtonModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss'
 })

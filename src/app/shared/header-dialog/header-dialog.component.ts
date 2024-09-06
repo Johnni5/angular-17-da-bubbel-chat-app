@@ -11,7 +11,7 @@ import { ProfileComponent } from '../profile/profile.component';
 @Component({
   selector: 'app-header-dialog',
   standalone: true,
-  imports: [MatDialogContent, ProfileComponent ],
+  imports: [MatButtonModule, MatDialogContent, ProfileComponent, MatButtonModule],
   templateUrl: './header-dialog.component.html',
   styleUrl: './header-dialog.component.scss'
 })

@@ -1,23 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-menu-side-left',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './menu-side-left.component.html',
   styleUrl: './menu-side-left.component.scss',
 })
-export class MenuSideLeftComponent {
-  isFirstDropdownMenuOpen = false ;
-  isSecondDropdownMenuOpen = true;
-
-
-  toogleDropDown1(){
-    this.isFirstDropdownMenuOpen = !this.isFirstDropdownMenuOpen;
-  }
-
-  toogleDropDown2(){
-    this.isSecondDropdownMenuOpen = !this.isSecondDropdownMenuOpen
-  }
-}
+export class MenuSideLeftComponent {}
