@@ -20,7 +20,7 @@ Merci :)
 */
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: RegisterUserComponent },
   { path: 'login', component: LoginComponent },
   { path: 'main', component: MainContentComponent },
   { path: 'menu', component: MenuSideLeftComponent },
