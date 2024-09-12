@@ -1,15 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router, RouterLink, RouterModule } from '@angular/router';
+import { InfoBoxComponent } from './info-box/info-box.component';
 
 
 
 @Component({
   selector: 'app-register-user',
   standalone: true,
-
-  imports: [CommonModule, FormsModule, RouterModule, RouterLink, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    RouterModule, 
+    RouterLink, 
+    ReactiveFormsModule,
+    MatDialogModule
+  ],
   templateUrl: './register-user.component.html',
   styleUrls: [
     './register-user.component.scss',
@@ -18,11 +26,12 @@ import { RouterLink, RouterModule } from '@angular/router';
 })
 
 export class RegisterUserComponent {
+  
 
   myForm: FormGroup; // name - just for now
-  securityForm: FormGroup; // name just for now
 
-  constructor(private fb: FormBuilder) {
+
+  constructor(public fb: FormBuilder, public dialog: MatDialog, private router: Router) {
 
     /*
     age-validator - IF NEEDED
@@ -37,7 +46,7 @@ export class RegisterUserComponent {
     });
     */
 
-    const passwordPattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
+    const passwordPattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%+-/*?&])[A-Za-z\\d@$!%*?&]{8,}$';
     const antiSqlPattern = '^[^\'";]*$';
     const emailPattern = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
 
@@ -53,35 +62,22 @@ export class RegisterUserComponent {
         no ' or " or ;   // to be checked - may be edited
     */
    
-    // if u got two forms, i.e.: security & myForm -> do this twice, for each form
-
-    this.securityForm = new FormGroup({
-      name: new FormControl('', [
-        Validators.required,
-        // Validators.minLength(5), 
-        Validators.pattern(antiSqlPattern)  
-      ]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(8), // for this case, norm:18+
-        Validators.pattern(passwordPattern)  
-      ])
-    });
 
     this.myForm = this.fb.group({
       name: new FormControl('', [
         Validators.required,
+        Validators.minLength(5),
         Validators.pattern('^[a-zA-Z ]*$')
-        // Validators.minLength(5)
       ]),
       email: new FormControl('', [
         Validators.required,
         Validators.email,
-        Validators.pattern(emailPattern)
+        // Validators.pattern(emailPattern) // not needed due to intern check..?
       ]),
       password: new FormControl('', [
         Validators.required,
-        Validators.minLength(8)
+        Validators.minLength(8), // for this case, norm:18+
+        Validators.pattern(passwordPattern),
       ]),
       terms: new FormControl(false, [
         Validators.requiredTrue // is checkbox marked or not
@@ -98,10 +94,24 @@ export class RegisterUserComponent {
   }
 
   onSubmit() {
-    if (this.myForm.valid && this.securityForm.valid) {
+    console.log('Submit button clicked.');
+    
+    console.log('Form Status:', this.myForm.status);
+    console.log('Password Control Status:', this.myForm.controls['password'].status);
+    console.log('Password Control Errors:', this.myForm.controls['password'].errors);
+  
+
+    if (this.myForm.valid) {
       console.log('current (valid) form is: ', this.myForm.value);
+      this.router.navigate(['create']);
     } else {
       console.log('Form is invalid, go home! .. or else ..');
     }
   }
+
+  openInfoBox() {
+    this.dialog.open(InfoBoxComponent);
+  }
+
+  
 }

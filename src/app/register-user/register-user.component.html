@@ -16,6 +16,9 @@
           <img src="../../assets/media/icons/arrow_back.svg" alt="arrow pointing left">
         </a>
         <h2 class="fontNunito">Konto erstellen</h2>
+        <div class="info-container">
+          <img title="How to -registrieren" (click)="openInfoBox()" class="info-icon" src="../../assets/media/icons/info_symbol-icon.png" alt="">
+        </div>
       </div>
       <div class="form-title ml-mr-auto">
         <p class="fontNunito">Mit deinem Namen und deiner eMail-Addresse hast Du dein neues DABubble-Konto:</p>
@@ -24,13 +27,13 @@
     <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
       <div class="input-container ml-mr-auto">
         <div class="name-container">
-          <input id="name" name="name" formControlName="name" class="input-field input-field-user-icon fontNunito" type="text" placeholder="Name und Nachname" />
+          <input name="name" autocomplete="off" formControlName="name" class="input-field input-field-user-icon fontNunito" type="text" placeholder="Name und Nachname" />
           <div class="warn-txt" *ngIf="myForm.controls['name'].invalid && myForm.controls['name'].touched">
             <span  *ngIf="myForm.controls['name'].errors && myForm.controls['name'].errors['required']" >Name ist ein Pflichtfeld.</span>
           </div>
         </div>
         <div class="email-container">
-          <input id="email" name="email" formControlName="email" class="input-field input-field-mail-icon fontNunito" type="email" placeholder="beispielname@email.com"/>
+          <input name="email" autocomplete="off" formControlName="email" class="input-field input-field-mail-icon fontNunito" type="email" placeholder="beispielname@email.com"/>
           <div class="warn-txt" *ngIf="myForm.controls['email'].invalid && myForm.controls['email'].touched">
             <span  *ngIf="myForm.controls['email'].errors && myForm.controls['email'].errors['required']" >eMail ist ein Pflichtfeld.</span>
           </div>
@@ -46,21 +49,18 @@
         <input type="checkbox" id="checkbox" formControlName="terms">
         <br>
         <div class="label-container">
-          <label id="terms" name="terms" for="terms" class="fontNunito">Ich stimme der <a class="font-nunito" [routerLink]="['/legal']">Datenschutzerklärung</a> zu.</label>
+          <span id="terms" name="terms" class="fontNunito">Ich stimme der <a class="font-nunito" [routerLink]="['/legal']">Datenschutzerklärung</a> zu.</span>
           <div *ngIf="myForm.controls['terms'].invalid && myForm.controls['terms'].touched"></div>
             <span style="color: red;"  *ngIf="myForm.controls['terms'].errors && myForm.controls['terms'].errors['required']" >Bitte klicken.</span>
         </div>
           
       </div>
+      <div class="btn-container ml-mr-auto">
+        <button  id="submit" type="submit" class="login-btn fontNunito"  [disabled]="myForm.invalid">Weiter</button>
+      </div>
     </form>
-
-    <div class="info-container">
-      <img class="info-icon" src="../../assets/media/icons/info_symbol-icon.png" alt="">
-    </div>
    
-    <div class="btn-container ml-mr-auto">
-      <button id="submit" type="submit" routerLink="/create" class="login-btn fontNunito"  [disabled]="myForm.invalid">Weiter</button>
-    </div>
+   
 
   </div>
 
