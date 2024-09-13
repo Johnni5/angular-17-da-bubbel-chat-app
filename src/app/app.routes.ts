@@ -20,9 +20,10 @@ Merci :)
 */
 
 export const routes: Routes = [
-  { path: '', component: RegisterUserComponent },
-  { path: 'login', component: LoginComponent },
+
+  { path: '', component: LoginComponent },
   { path: 'main', component: MainContentComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'menu', component: MenuSideLeftComponent },
   { path: 'register', component: RegisterUserComponent },
   { path: 'create', component: CreateAvatarComponent },
