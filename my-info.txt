@@ -1,0 +1,4 @@
+klick on add-user in main - window is off
+
+hover in thread - off
+

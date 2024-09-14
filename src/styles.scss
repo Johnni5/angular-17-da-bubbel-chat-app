@@ -155,3 +155,32 @@ app-search {
   display: contents;
 }
 
+.full-width{
+  width: 100%;
+}
+
+.padding-25{
+  padding: 1.5625rem;
+}
+
+.d-none{
+  display: none;
+}
+
+app-message-edit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  background: $white;
+  position: absolute;
+  bottom: -45px;
+  right: -170px;
+  width: 240px;
+  height: 50px;
+
+  gap: 5px;
+  border-radius: 0px $b-radius-3 $b-radius-3 $b-radius-3;
+  box-shadow: $shadow;
+
+}
