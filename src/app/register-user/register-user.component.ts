@@ -28,13 +28,13 @@ import { InfoBoxComponent } from './info-box/info-box.component';
 export class RegisterUserComponent {
   
   // public fb = Inject(FormBuilder);
-  public router = Inject(Router);
+  // public router = Inject(Router);
   // public dialog = Inject(MatDialog);
 
-  // myForm = new FormGroup; // name - just for now
+  myForm: FormGroup; // name - just for now
 
 
-  constructor(public fb: FormBuilder, public dialog: MatDialog) {
+  constructor(public fb: FormBuilder, public dialog: MatDialog, public router: Router) {
     
     /*
     age-validator - IF NEEDED
@@ -66,7 +66,7 @@ export class RegisterUserComponent {
     */
    
 
-    const myForm = new FormGroup({
+    this.myForm = this.fb.group({
       name: new FormControl('', [
         Validators.required,
         Validators.minLength(5),
@@ -96,7 +96,7 @@ export class RegisterUserComponent {
     // });
   }
 
-  onSubmit(myForm: NgForm) {
+  onSubmit() {
     console.log('Submit button clicked.');
     
     // console.log('Form Status:', this.myForm.status);
