@@ -19,7 +19,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 ],
   templateUrl: './register-user.component.html',
   styleUrls: [
-    './register-user.component.new.scss',
+    './register-user.component.scss',
     './register-user.component.media.scss',
   ]
 })
