@@ -22,10 +22,13 @@ export class MenuSideLeftComponent {
   
   toogleDropDown1(){
     this.isFirstDropdownMenuOpen = !this.isFirstDropdownMenuOpen;
+    this.db.unsubUserList = this.db.subChannelList();
+
   }
 
   toogleDropDown2(){
     this.isSecondDropdownMenuOpen = !this.isSecondDropdownMenuOpen
+    this.db.unsubUserList = this.db.subUserList();
   }
 
   addChannel (){

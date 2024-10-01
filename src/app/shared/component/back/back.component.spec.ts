@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IndexPageComponent } from './index-page.component';
+import { BackComponent } from './back.component';
 
-describe('IndexPageComponent', () => {
-  let component: IndexPageComponent;
-  let fixture: ComponentFixture<IndexPageComponent>;
+describe('BackComponent', () => {
+  let component: BackComponent;
+  let fixture: ComponentFixture<BackComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IndexPageComponent]
+      imports: [BackComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(IndexPageComponent);
+    fixture = TestBed.createComponent(BackComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -5,6 +5,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { InfoBoxComponent } from './info-box/info-box.component';
 import { FirebaseService } from '../services/firebase/firebase.service';
+import { LoginComponent } from '../login/login.component';
+import { LogoComponent } from "../shared/logo/logo.component";
+import { BackComponent } from '../shared/component/back/back.component';
 
 
 
@@ -19,7 +22,10 @@ import { FirebaseService } from '../services/firebase/firebase.service';
     RouterLink,
     ReactiveFormsModule,
     MatDialogModule,
-    InfoBoxComponent
+    InfoBoxComponent,
+    LoginComponent,
+    LogoComponent,
+    BackComponent
 ],
 
   templateUrl: './register-user.component.html',
@@ -41,12 +47,7 @@ export class RegisterUserComponent {
 
 
   constructor() {
-  effect(() => {
-      const user = this.fb.userSignal();
-      if(user) {
-        console.log('user created via Signal', user);
-      }
-    })
+ 
     // const upper_req = '(?=.*[A-Z])';
     // const special_char_req = '(?=.*[!@#$%^&*()])';
     // const lower_req = '(?=.*[a-z])';
@@ -65,31 +66,32 @@ export class RegisterUserComponent {
         Validators.minLength(8),
         Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@\$!%+\-/\*\?&])[A-Za-z0-9@$!%+\-/\*\?&]+$'),
       ]),
-      terms: new FormControl(false, [
-        // checks, if checkbox is checked - default is set to not-checked
-        Validators.requiredTrue
-      ]),
+      term: new FormControl(false, [
+        Validators.requiredTrue // Checkbox must be checked (i.e., true) to be valid
+      ])
     })
 
   }
 
-  onSubmit() {
-
+  async onSubmit() {
     this.isFormSubmitted = true;
 
     if (this.myForm.valid) {
-         // Extrahiere die Werte aus dem Formular
-    const email = this.myForm.get('email')?.value;  // Hole den Email-Wert
-    const password = this.myForm.get('password')?.value;
-    const displayName = this.myForm.get('name')?.value;
-      // Hole den Passwort-Wert
-      this.fb.createUser(email, password, displayName ).then((user) => {
-        console.log('User successfully registered:', user);
-      });
+      const email = this.myForm.get('email')?.value;  // Hole den Email-Wert
+      const password = this.myForm.get('password')?.value;
+      const displayName = this.myForm.get('name')?.value;
 
-      // this.router.navigate(['avatar']);
+      try {
+        const user = await this.fb.createUser(email, password, displayName);
+        if (user) {
+          console.log('User successfully registered:', user);
+           this.router.navigate(['avatar']); // Navigation nach der Registrierung
+        }
+      } catch (error) {
+        // Hier kannst du eine spezifische Fehlerbehandlung vornehmen
+        console.error('Error during user registration:', error);
+      }
     } else {
-      // TODO: was zu tun?
       console.log('Form is invalid, go home! .. or else ..');
     }
   }
