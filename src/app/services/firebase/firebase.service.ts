@@ -9,6 +9,7 @@ import {
   updateProfile,
   User as FirebaseUser,
   fetchSignInMethodsForEmail,
+  onAuthStateChanged,
 } from '@angular/fire/auth';
 import {
   collection,
@@ -18,10 +19,13 @@ import {
   setDoc,
   onSnapshot,
   getDoc,
+  Unsubscribe,
 } from '@angular/fire/firestore';
 import { User as AppUser } from '../../models/interfaces/user.model';
 import { Channel } from '../../models/interfaces/channel.model';
 import { Router } from '@angular/router';
+import { ChatRoomService } from '../chat-room/chat-room.service';
+import { UserServiceService } from '../user-service/user-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,77 +35,43 @@ export class FirebaseService {
   private auth: Auth = inject(Auth);
   provider = new GoogleAuthProvider();
   router = inject(Router);
+  chat = inject(ChatRoomService)
+  userService = inject(UserServiceService)
 
-  public userList: AppUser[] = [];
-  public channelList: Channel[] = [];
 
-  currentUser: AppUser | null = null;
+  public currentUser = signal<AppUser | null>(null);
   public errorMessageLogin = signal('');
 
-  unsubUserList: any;
-  unsubChannelList: any;
- 
-  subChannelList() {
-    return onSnapshot(this.getChannels(), (list) => {
-      this.channelList = [];
-      list.forEach((element) => {
-        const channelData = element.data();
-        const channelId = element.id;
-        const channelObject = this.setChannelObject(channelData, channelId);
-        this.channelList.push(channelObject); // Kanał do listy
-      });
-    });
-  }
-  
-  subUserList() {
-    return onSnapshot(this.getUsers(), (list) => {
-      this.userList = [];
-      list.forEach((element) => {
-        const userData = element.data();
-        const userId = element.id;
-        const userObject = this.setUserObject(userData, userId);
-        this.userList.push(userObject); // Użytkownik do listy
-      });
-    });
-  }
-  
-  ngOnDestroy(): void {
-    if (this.unsubUserList) {
-      this.unsubUserList(); 
-    }
-  
-    if (this.unsubChannelList) {
-      this.unsubChannelList();
-    }
+  constructor() {
+
   }
 
-  
-  setUserObject(obj: any, id: string): AppUser {
-    return {
-      status: obj.status || false,
-      channels: obj.channels || [],
-      uId: id || '',
-      email: obj.email || '',
-      displayName: obj.displayName || '',
-      avatarUrl: obj.avatarUrl || '',
-      birthdate: obj.birthdate || '',
-    };
+  async loadAllBackendData() {
+    this.chat.subChannelList();
+    this.userService.subUserList();
   }
 
-  setChannelObject(obj: any, id: string): Channel {
-    return {
-      chanId: id || '',
-      channelName: obj.channelName || '',
-      channelDescription: obj.channelDescription || '',
-      allMembers: obj.allMembers || '',
-      specificPeople: obj.specificPeople || [],
-      createdAt: obj.createdAt || '',
-      createdBy: obj.createdBy || ''
-    };
-  }
+
+  // async subChannelList() {
+  //   return new Promise((resolve, reject) => {
+  //     this.unsubscribe = onSnapshot(this.getChannels(), (list) => {
+  //       this.channelList = [];
+  //       list.forEach((element) => {
+  //         const channelData = element.data();
+  //         const channelId = element.id;
+  //         const channelObject = this.setChannelObject(channelData, channelId);
+  //         this.channelList.push(channelObject);
+  //       });
+  //       resolve(this.channelList);
+  //     }, (error) => {
+  //       reject(error);
+  //     });
+  //   });
+  // }
+
 
   // Methode zum Erstellen eines neuen Benutzers
-  createUser(
+ async createUser(
     email: string,
     password: string,
     displayName: string
@@ -109,7 +79,6 @@ export class FirebaseService {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((userCredential) => {
         const firebaseUser = userCredential.user;
-        // Setze den displayName nach der erfolgreichen Registrierung
         return updateProfile(firebaseUser, {
           displayName: displayName,
         }).then(() => {
@@ -122,6 +91,7 @@ export class FirebaseService {
           };
           console.log('Registrierter User ist', user);
           this.addUserToFirestore(user);
+          return user;
         });
       })
       .catch((error) => {
@@ -150,12 +120,12 @@ export class FirebaseService {
             ); // Standardfehlermeldung
         }
       });
+
   }
 
   async loginWithEmailAndPassword(email: string, password: string): Promise<any> {
     try {
       const exists = await this.userExists(email); // Überprüfen, ob der Benutzer existiert
-
       if (!exists) {
         this.errorMessageLogin.set(
           'Kein Benutzer mit dieser E-Mail-Adresse gefunden.'
@@ -169,7 +139,7 @@ export class FirebaseService {
        await this.getUserByUid(user.uid)
         this.router.navigate(['/start/main']);
       }
-   
+
 
       console.log('User is logged in:', user);
       this.errorMessageLogin.set(''); // Fehlernachricht zurücksetzen bei erfolgreicher Anmeldung
@@ -193,8 +163,9 @@ export class FirebaseService {
       const userDocSnapshot = await getDoc(userDocRef); // Abrufen des Dokuments
 
       if (userDocSnapshot.exists()) {
-         this.currentUser = userDocSnapshot.data() as AppUser; // Cast zu deinem AppUser-Interface
-        return this.currentUser; // Benutzer-Daten zurückgeben
+        const userData = userDocSnapshot.data() as AppUser; // Cast zu deinem AppUser-Interface
+        this.currentUser.set(userData)
+        return userData// Benutzer-Daten zurückgeben
       } else {
         console.log('Kein Benutzer mit dieser UID gefunden.');
         return null; // Falls kein Benutzer gefunden wird
@@ -232,12 +203,12 @@ export class FirebaseService {
         displayName: displayName,
       };
       await this.addUserToFirestore(user);
-      this.currentUser = user;
-      console.log('User ist eingeloggt', this.currentUser);
+      this.currentUser.set(user);
+      console.log('User ist eingeloggt', this.currentUser());
       this.router.navigate(['/start/avatar']);
 
     } catch (error) {
-
+      console.error('Fehler bei der Google-Anmeldung:', error);
     }
   }
 
@@ -253,7 +224,7 @@ export class FirebaseService {
       });
   }
 
-  addUserToFirestore(user: AppUser) {
+  async addUserToFirestore(user: AppUser) {
     const userCollectionRef = collection(this.firestore, 'users');
     const userDocRef = doc(userCollectionRef, user.uId);
     setDoc(userDocRef, user).then(() => {
@@ -261,18 +232,4 @@ export class FirebaseService {
     });
   }
 
-  addChannelToFirestore(channel: Channel) {
-    const channelCollectionRef = collection(this.firestore, 'channels');
-    const channelDocRef = doc(channelCollectionRef);
-    channel.chanId = channelDocRef.id;
-    setDoc(channelDocRef, channel);
-  }
-
-  getChannels() {
-    return collection(this.firestore, 'channels');
-  }
-
-  getUsers() {
-    return collection(this.firestore, 'users');
-  }
 }

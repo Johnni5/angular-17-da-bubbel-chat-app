@@ -6,49 +6,114 @@ import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Message } from '../../../models/interfaces/message.model';
+import { doc, Timestamp, updateDoc } from 'firebase/firestore';
+import { ChatRoomService } from '../../../services/chat-room/chat-room.service';
+import { Firestore } from '@angular/fire/firestore';
+import { User } from '../../../models/interfaces/user.model';
 
 @Component({
   selector: 'app-message-answer',
   standalone: true,
-  imports: [CommonModule, ReactionBarComponent, TimeSeparatorComponent, EmojiComponent, PickerComponent, DatePipe],
+  imports: [
+    CommonModule,
+    ReactionBarComponent,
+    TimeSeparatorComponent,
+    EmojiComponent,
+    PickerComponent,
+    DatePipe,
+  ],
   templateUrl: './message-answer.component.html',
   styleUrl: './message-answer.component.scss',
 })
 export class MessageAnswerComponent {
-
+  chat = inject(ChatRoomService);
+  firestore = inject(Firestore);
   today: number = Date.now();
+  state = inject(StateControlService);
 
+  @Input() hideDetails: boolean = false;
   @Input() index: number = 0;
 
-  @Input() userMessage = {
-      userName: 'User Name',
-      timeStamp: 'time stamp',
-      userMessage: 'Welche Version ist aktuell von Angular?',
-      profileImageSrc: 'assets/media/icons/profile-icons/user-6-noah.svg',
-      profileImageAlt: 'profile-image',
-      messageContent: 'Welche Version ist aktuell von Angular?',
-      answers: '2 Antworten',
-      lastAnswerTimeStamp: 'Time stamp from last answer',
+  @Input() userMessage: Message = {
+    text: '',
+    chatId: '',
+    timestamp: Timestamp.now(),
+    messageSendBy: {
+      uId: '',
+      email: '',
+      status: false,
+      displayName: '',
+      avatarUrl: '',
+      channels: []
+    },
+    reactions: [],
+    threadId: '',
+    answerCount: 0,
+    lastAnswer: '',
+    editCount: 0,
+    lastEdit: '',
+    storageData: '',
+    taggedUser: [],
   };
 
-  emojis: { symbol: string, count: number }[] = [];
+  
+
+  emojis: { symbol: string; count: number }[] = [];
 
   onEmojiSelected(emoji: string) {
     // Überprüfe, ob das Emoji bereits existiert
-    const existingEmoji = this.emojis.find(e => e.symbol === emoji);
-    
-    if (existingEmoji) {
-      existingEmoji.count++; // Erhöhe den Zähler
+    const existingReaction = this.userMessage.reactions.find(
+      (e) => e.symbol === emoji
+    );
+
+    if (existingReaction) {
+      existingReaction.count++; // Erhöhe den Zähler
     } else {
-      this.emojis.push({ symbol: emoji, count: 1 }); // Füge neues Emoji hinzu
+      this.userMessage.reactions.push({ symbol: emoji, count: 1 });
     }
-    console.log(this.emojis);
+
+    this.updateReactionsInFirestore();
   }
 
-  state = inject(StateControlService);
-  @Input() hideDetails: boolean = false;
+  constructor() {
+
+  }
+
+  ngOnInit() {
+    // if(this.userId) {
+    //   this.getUserFromAnswer(this.userId);
+    // }
+
+  }
+
+  // getUserFromAnswer(userId: string) {
+  //   if (userId) {
+  //     this.user = this.chat.userList.find((user) => user.uId === userId);
+  //     console.log('User:', this.user);
+  //   }
+  // }
 
   openThread() {
     this.state.isThreadOpen = true;
+  }
+
+  // Methode zum Aktualisieren der Reaktionen in Firestore
+  async updateReactionsInFirestore() {
+    const channelId = this.chat.currentChannelData.chanId;
+    const messageId = this.userMessage.threadId;
+
+    const messageDocRef = doc(
+      this.firestore,
+      'channels',
+      channelId,
+      'messages',
+      messageId
+    );
+
+    // Aktualisiere die Reaktionen im Firestore-Dokument
+    await updateDoc(messageDocRef, { reactions: this.userMessage.reactions });
+
+    console.log('Reaktionen erfolgreich aktualisiert');
   }
 }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ImprintComponent } from './imprint.component';
+import { LinkFooterComponent } from './link-footer.component';
 
-describe('ImprintComponent', () => {
-  let component: ImprintComponent;
-  let fixture: ComponentFixture<ImprintComponent>;
+describe('LinkFooterComponent', () => {
+  let component: LinkFooterComponent;
+  let fixture: ComponentFixture<LinkFooterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImprintComponent]
+      imports: [LinkFooterComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ImprintComponent);
+    fixture = TestBed.createComponent(LinkFooterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

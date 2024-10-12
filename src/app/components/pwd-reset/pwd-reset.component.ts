@@ -6,13 +6,12 @@ import { FirebaseService } from '../../services/firebase/firebase.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoBoxComponent } from '../../register-user/info-box/info-box.component';
 import { CommonModule } from '@angular/common';
-import { Location } from '@angular/common';
-
+import { LinkFooterComponent } from "../../shared/component/link-footer/link-footer.component";
 
 @Component({
   selector: 'app-pwd-reset',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, RouterLink, FormsModule, ReactiveFormsModule, LinkFooterComponent],
   templateUrl: './pwd-reset.component.html',
   styleUrl: './pwd-reset.component.scss'
 })
@@ -57,11 +56,4 @@ export class PwdResetComponent {
   togglePasswordCopyVisibility() {
     this.isPasswordCopyVisible = !this.isPasswordCopyVisible;
   }
-
-  readonly location = inject(Location);
-
-  goBack(): void {
-    this.location.back(); // Navigate to the previous page
-  }
 }
-

@@ -4,6 +4,9 @@ import { AvatarComponent } from '../../../shared/avatar/avatar.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelCreateComponent } from '../../../shared/component/channel-create/channel-create.component';
 import { FirebaseService } from '../../../services/firebase/firebase.service';
+import { ChatRoomService } from '../../../services/chat-room/chat-room.service';
+import { UserServiceService } from '../../../services/user-service/user-service.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -18,17 +21,28 @@ export class MenuSideLeftComponent {
   isSecondDropdownMenuOpen = true;
   dialog = inject(MatDialog);
   db = inject(FirebaseService)
+  chat = inject(ChatRoomService)
+  userService = inject(UserServiceService)
+  router = inject(Router);
 
-  
-  toogleDropDown1(){
-    this.isFirstDropdownMenuOpen = !this.isFirstDropdownMenuOpen;
-    this.db.unsubUserList = this.db.subChannelList();
-
+  ngOnInit() {
+    this.chat.subChannelList();
+    this.userService.subUserList();
   }
+
+  ngOnDestroy(): void {
+    this.chat.unsubscribe();
+    this.userService.unsubscribe()
+  }
+
+
+ async toogleDropDown1(){
+    this.isFirstDropdownMenuOpen = !this.isFirstDropdownMenuOpen;
+  }
+
 
   toogleDropDown2(){
     this.isSecondDropdownMenuOpen = !this.isSecondDropdownMenuOpen
-    this.db.unsubUserList = this.db.subUserList();
   }
 
   addChannel (){
@@ -37,10 +51,12 @@ export class MenuSideLeftComponent {
     })
   }
 
-  openChannel() {
-    console.log('TEST');
-    
+  openChannel(chanId : string) {
+    this.chat.openChatById(chanId);
   }
 
+  writeMessage() {
+    this.router.navigate(['/start/main']);
+  }
 
 }

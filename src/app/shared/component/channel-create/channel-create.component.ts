@@ -6,8 +6,6 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { AddMembersComponent } from '../add-members/add-members.component';
-import { FirebaseService } from '../../../services/firebase/firebase.service';
 
 import {
   FormControl,
@@ -17,13 +15,11 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 
-import { Channel } from '../../../models/interfaces/channel.model'
+import { Channel } from './../../../models/interfaces/channel.model'
 import { InputAddUsersComponent } from '../input-add-users/input-add-users.component';
 import { AvatarComponent } from '../../avatar/avatar.component';
-import { Auth } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
-import { AppComponent } from '../../../app.component';
 import { CloseComponent } from '../close/close.component';
+import { ChatRoomService } from '../../../services/chat-room/chat-room.service';
 
 @Component({
   selector: 'app-channel-create',
@@ -33,11 +29,9 @@ import { CloseComponent } from '../close/close.component';
     RouterModule,
     FormsModule,
     RouterLink,
-    AddMembersComponent,
     MatDialogContent,
-    AddMembersComponent,
     ReactiveFormsModule,
-    InputAddUsersComponent, 
+    InputAddUsersComponent,
     AvatarComponent,
     CloseComponent
   ],
@@ -54,9 +48,9 @@ export class ChannelCreateComponent{
   dialog = inject(MatDialogRef<ChannelCreateComponent>);
   readonly dialogAddMembers = inject(MatDialog);
   readonly dialogRef = inject(MatDialogRef<ChannelCreateComponent>);
-  db = inject(FirebaseService);
+  chat = inject(ChatRoomService);
 
-  
+
   onRadioChange(event: any) {
     if (event.target.value === 'specificPeople') {
       this.isSpecificPeople = true
@@ -77,7 +71,7 @@ export class ChannelCreateComponent{
     return this.channelForm.controls['specificPeople'].valid;
   }
 
-  constructor() { 
+  constructor() {
     this.channelForm = new FormGroup({
       channelName: new FormControl('', [Validators.required, Validators.minLength(3),]),
       channelDescription: new FormControl(''),
@@ -96,35 +90,24 @@ export class ChannelCreateComponent{
     this.dialog.close();
   }
 
-  openAddMembers(event: Event) {
-    this.dialogAddMembers.open(AddMembersComponent, {
-      panelClass: 'add-members-container',
-       // Custom class for profile dialog
-    });
-    this.closeDialogAddChannel(event);
-  }
-
-
-
   createChannelModel(event: Event) {
     // debugger
       const formValues = this.channelForm.value;
       const newChannel: Channel = {
-        chanId: '', 
+        chanId: '',
         channelName: formValues.channelName,
         channelDescription: formValues.channelDescription || '',
         allMembers: formValues.member,
         specificPeople: formValues.specificPeople ? formValues.specificPeople.split(',') : [],
         createdAt: new Date().toISOString(),
-        createdBy: 'user-id', 
+        createdBy: 'user-id',
        }
       this.createChannel(event, newChannel)
   }
 
   createChannel(event: Event, newChannel: Channel) {
     console.log(newChannel);
-    this.db.addChannelToFirestore(newChannel);
+    this.chat.addChannelToFirestore(newChannel);
     this.closeDialogAddMembers(event)
   }
 }
-

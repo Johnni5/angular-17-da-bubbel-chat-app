@@ -12,6 +12,9 @@ import { ChannelEmptyComponent } from './shared/component/channel-empty/channel-
 import { ChannelEditComponent } from './shared/component/channel-edit/channel-edit.component';
 import { ChannelCreateComponent } from './shared/component/channel-create/channel-create.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ChatRoomComponent } from './main-content/chat-room/chat-room.component';
+import { empty } from 'rxjs';
+import { MessageNewComponent } from './shared/component/message-new/message-new.component';
 
 
 /*
@@ -21,21 +24,37 @@ Merci :)
 */
 
 export const routes: Routes = [
-
   { path: '', redirectTo: 'start', pathMatch: 'full' },
   { path: 'start', component: LoginComponent },
   { path: 'start/register', component: RegisterUserComponent },
-  { path: 'start/main', component: MainContentComponent },
-  { path: 'start/menu', component: MenuSideLeftComponent },
+  // { path: 'start/main', component: MainContentComponent },
   { path: 'start/avatar', component: CreateAvatarComponent },
-  { path: 'reset', component: PwdResetComponent },
-  { path: 'recovery', component: PwdRecoveryComponent },
-  { path: 'start/create', component: ChannelCreateComponent },
-  { path: 'start/empty', component: ChannelEmptyComponent },
-  { path: 'start/edit', component: ChannelEditComponent },
   { path: 'start/imprint', component: ImprintComponent },
   { path: 'start/legal', component: LegalComponent },
-  { path: '**', component: PageNotFoundComponent } 
+  { path: 'start/main', component: MainContentComponent, children:[
+    { path: '', component: MessageNewComponent},
+    { path: 'chat/:id', component: ChatRoomComponent}
+  ] },
+  { path: 'reset', component: PwdResetComponent },
+  { path: 'recovery', component: PwdRecoveryComponent },
+  { path: '**', component: PageNotFoundComponent },
 
 ];
+
+// from before :
+// export const routes: Routes = [
+//   { path: '', redirectTo: 'start', pathMatch: 'full' },
+//   { path: 'start', component: LoginComponent },
+//   { path: 'start/register', component: RegisterUserComponent },
+//   // { path: 'start/main', component: MainContentComponent },
+//   { path: 'start/avatar', component: CreateAvatarComponent },
+//   { path: 'start/imprint', component: ImprintComponent },
+//   { path: 'start/legal', component: LegalComponent },
+//   // { path: '**', component: PageNotFoundComponent },
+//   { path: 'start/main', component: MainContentComponent, children:[
+//     { path: '', component: MessageNewComponent},
+//     { path: 'chat/:id', component: ChatRoomComponent}
+//   ] },
+
+// ];
 

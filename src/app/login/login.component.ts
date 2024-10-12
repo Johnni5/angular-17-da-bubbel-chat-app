@@ -4,13 +4,14 @@ import { FirebaseService } from '../services/firebase/firebase.service';
 import { LogoComponent } from "../shared/logo/logo.component";
 import { Router, RouterLink, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LinkFooterComponent } from '../shared/component/link-footer/link-footer.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', './login.component.media.scss'],
-  imports: [CommonModule, LogoComponent, RouterModule,ReactiveFormsModule, FormsModule, RouterModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, LogoComponent, RouterModule,ReactiveFormsModule, FormsModule, RouterModule, RouterOutlet, RouterLink, LinkFooterComponent],
 
 })
 export class LoginComponent {
@@ -21,8 +22,6 @@ export class LoginComponent {
   // FormGroup für die Anmeldeform
   loginForm: FormGroup;
   isFormSubmitted:boolean = false;
-
-
 
   constructor() {
     this.loginForm = this.formBuilder.group({
@@ -40,6 +39,7 @@ export class LoginComponent {
 
   async createNewUserWithGoogle() {
     await this.fb.createGoogleUser();
+    this.fb.loadAllBackendData()
   }
 
  async loginWithEmailAndPassword() {
@@ -48,18 +48,17 @@ export class LoginComponent {
     const password = this.loginForm.get('password')?.value;
     if (this.loginForm.valid) {
        await this.fb.loginWithEmailAndPassword(email, password).then(() => {
-        console.log('user is eingeloggot', this.fb.currentUser?.uId, 'user ist:', this.fb.currentUser?.displayName)
+        console.log('user is eingeloggot', this.fb.currentUser()?.uId, 'user ist:', this.fb.currentUser()?.displayName)
+        this.fb.loadAllBackendData()
     })} else {
       console.log('Formular ist ungültig');
     }
   }
 
   isPasswordVisible = false;
-  
+
   togglePasswordVisibility() {
     this.isPasswordVisible = !this.isPasswordVisible;
   }
 
 }
-
-

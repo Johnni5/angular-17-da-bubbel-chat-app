@@ -51,6 +51,7 @@ app-message-field {
 width: 100%;
 }
 
+app-message-new,
 app-login,
 app-pwd-reset,
 app-pwd-recovery,
@@ -58,7 +59,8 @@ app-register-user,
 app-create-avatar,
 app-imprint,
 app-legal,
-app-page-not-found {
+app-page-not-found,
+app-link-footer {
   flex: 1;
   width: 100%;
   height: 100%;
@@ -154,10 +156,11 @@ a, button {
   cursor: pointer;
 }
 
-$b-radius-1: 1.875rem; //30px
-$b-radius-2: 3.125rem; //50px
-$b-radius-3: 1.25rem;  // 20px
+$b-radius-1: 1.875rem;
+$b-radius-2: 3.125rem;
+$b-radius-3: 1.25rem;
 $padding-dialog: 2.1875rem;
+$padding-global: .625rem;
 
 app-search {
   display: contents;
@@ -190,11 +193,14 @@ app-message-edit {
   gap: 5px;
   border-radius: 0px $b-radius-3 $b-radius-3 $b-radius-3;
   box-shadow: $shadow;
-
 }
 
 .resize-none {
   resize: none;
+}
+
+@mixin firstTranistion() {
+  transition: all 175ms ease-in-out;
 }
 
 .ml-mr-auto {
@@ -217,11 +223,6 @@ app-message-edit {
 	color: $red;
   height: 30px;
   font-size: .75rem;
-}
-
-.warn-txt-2 {
-	width: 70%;
-  padding-left: 1.5625rem;
 }
 
 [disabled] {
@@ -250,12 +251,12 @@ app-message-edit {
 }
 
 // used in mult. comp.
-.pwd-eye, .pwd-eye-2 {
+.pwd-eye {
   width: 32px;
-  // top: 13%;
+  top: 13%;
   position: absolute;
   height: 30px;
-  left: 75%;
+  left: 89%;
   cursor: pointer;
   background-size: contain;
   background-repeat: no-repeat;
@@ -264,6 +265,7 @@ app-message-edit {
 .eye-open {
   background-image: url('./assets/media/icons/pwd-visible_eye-open.png');
 }
+
 .eye-closed {
   background-image: url('./assets/media/icons/pwd-not-visible_eye-close.png');
 }

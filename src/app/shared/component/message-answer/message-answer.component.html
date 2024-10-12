@@ -1,26 +1,26 @@
 
 <div class="chat-content">
- @if(!hideDetails){
-  <app-time-separator class="full-width"></app-time-separator>
+ @if(!hideDetails ){
+  <app-time-separator [userDate]="userMessage" class="full-width"></app-time-separator>
  }
   <div class="user-message-container">
     <app-reaction-bar [index]="index" (emojiSelected)="onEmojiSelected($event)"></app-reaction-bar>
-    <img src={{userMessage.profileImageSrc}} alt="profil-image"/>
+    <img src={{userMessage.messageSendBy!.avatarUrl}} alt="profil-image"/>
 
     <div class="message-content">
       <div class="message-container">
 
         <div class="font-nunito">
-          <h2> {{userMessage.userName}}</h2> <span>{{ today | date:'H:mm' }} Uhr</span>
+          <h2> {{userMessage.messageSendBy.displayName}}</h2> <span>{{ userMessage.timestamp.toDate() | date: 'H:mm' }} Uhr</span>
         </div>
-        
-        <div class="messages-main-chat font-nunito">{{userMessage.messageContent}}
+
+        <div class="messages-main-chat font-nunito">{{userMessage.text}}
         </div>
 
         <div class="answer-container">
-          <div (click)="openThread()" class="answer">{{userMessage.answers}}</div>
+          <div (click)="openThread()" class="answer">{{userMessage.time}}</div>
           @if (!hideDetails) {
-            <div class="time-stamp">{{userMessage.lastAnswerTimeStamp}}</div>
+            <div class="time-stamp">{{userMessage.lastAnswer}}</div>
           } @else {
             <div class="line-separator"></div>
           }
@@ -28,7 +28,7 @@
       </div>
 
       <div class="emoijReaction">
-        @for( emoji of emojis; track emojis[index]) {
+        @for( emoji of userMessage.reactions; track emojis[index]) {
           <button class="singleEmoij">{{emoji.symbol}} {{emoji.count}}</button>
         }
 
